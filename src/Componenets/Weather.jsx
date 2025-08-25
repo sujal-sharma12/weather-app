@@ -15,22 +15,22 @@ export default function Weather() {
       setWeather(null);
       setForecast(null);
 
-          const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-          );
-        const forecastRes = await fetch(
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+      );
+      const forecastRes = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
-       );
+      );
 
       if (!res.ok) throw new Error("city or location not found");
 
-       const data = await res.json();
-       const forecastData = await forecastRes.json();
+      const data = await res.json();
+      const forecastData = await forecastRes.json();
 
-       setWeather(data);
+      setWeather(data);
       setForecast(forecastData);
     } catch (err) {
-       setWeather(null);
+      setWeather(null);
       setForecast(null);
       setError(err.message);
     }
@@ -91,14 +91,42 @@ export default function Weather() {
             <p>🌡️ {weather.main.feels_like}°C</p>
             <p>💧 {weather.main.humidity}%</p>
             <p>🌬️ {(weather.wind.speed * 3.6).toFixed(1)} km/h</p>
-            
           </div>
         </div>
       )}
 
-
-
-
+      {forecast && (
+        <div className="mt-8 bg-gray-800 p-6 rounded-2xl shadow-lg w-[90%] max-w-3xl">
+          <h2 className="text-xl font-bold mb-4">5-Day Forecast</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {forecast.list
+              .filter((item) => item.dt_txt.includes("12:00:00"))
+              .map((day, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col items-center bg-gray-700 p-4 rounded-lg shadow-md"
+                >
+                  <p className="font-semibold text-sm">
+                    {new Date(day.dt_txt).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <img
+                    alt="forecast icon"
+                    src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+                    className="w-14 h-14"
+                  />
+                  <p className="font-bold">{Math.round(day.main.temp)}°C</p>
+                  <p className="capitalize text-gray-300 text-sm text-center">
+                    {day.weather[0].description}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
