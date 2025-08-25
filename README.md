@@ -21,3 +21,10 @@ A simple and interactive Weather Application built with React.js, which allows u
 - **Vite** – Development build tool  
 
 ---
+2. Install dependencies
+
+npm install
+
+3.Run the project
+
+npm run dev
